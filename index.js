@@ -24,7 +24,8 @@ const postAnswer = async (sessionToken, day, answer, starLevel) => {
     }
   }
 
-  console.log(`posting ${answer} for level ${starLevel} to ${saveUrl}`)
+  console.log(`posting ${answer} for level ${starLevel} to ${saveUrl}`);
+
   const saveResult = await axios.post(saveUrl, params, options);
 
   //TODO do some HTML parsing here
@@ -46,6 +47,11 @@ const runDay = async (day) => {
 
   let input = null;
 
+  if (!fs.existsSync(day)) {
+    fs.mkdirSync(day);
+  }
+  
+
   if (fs.existsSync(`${day}/input.txt`)) {
     input = fs.readFileSync(`${day}/input.txt`, 'utf8')
   } else {
@@ -58,6 +64,8 @@ const runDay = async (day) => {
         Cookie: `session=${sessionToken}`
       }
     });
+
+
 
     fs.writeFileSync(`${day}/input.txt`, result.data);
     fs.writeFileSync(`${day}/results.json`, JSON.stringify(DEFAULT_RESULTS));
@@ -136,13 +144,21 @@ const runDay = async (day) => {
   }
 }
 
+let setDay = null;
+
 const today = new Date();
 today.setHours(today.getHours() - 5); //EST offset
-const dayString = today.toISOString().split('T')[0].split('-')[2];
+setDay = today.toISOString().split('T')[0].split('-')[2];
 
 //allow overriding date from command line args
+const commandLineArgs = process.argv.slice(2);
+
+if(commandLineArgs.length > 0 ) {
+  setDay = commandLineArgs[0];
+}
+
 
 console.log(' ** Advent of Code 2022 ** ');
-console.log(`Running day ${today}`)
-runDay(dayString);
+console.log(`Running day ${setDay}`)
+runDay(setDay);
 console.log('Done!');
