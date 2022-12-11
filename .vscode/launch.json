@@ -21,7 +21,7 @@
         "<node_internals>/**"
       ],
       "program": "${workspaceFolder}\\index.js",
-      "args": ["02"]
+      "args": ["04"]
     }
   ]
 }

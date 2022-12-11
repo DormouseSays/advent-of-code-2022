@@ -11,6 +11,10 @@ const DEFAULT_RESULTS = {
 };
 
 const postAnswer = async (sessionToken, day, answer, starLevel) => {
+  if(!answer) {
+    console.log('no answer to send')
+    return;
+  }
   const saveUrl = `https://adventofcode.com/2022/day/${parseInt(day)}/answer`;
   const params = new URLSearchParams({
     level: starLevel,
@@ -68,6 +72,7 @@ const runDay = async (day) => {
 
 
     fs.writeFileSync(`${day}/input.txt`, result.data);
+    fs.writeFileSync(`${day}/sample.txt`, "");
     fs.writeFileSync(`${day}/results.json`, JSON.stringify(DEFAULT_RESULTS));
 
     input = result.data;
@@ -95,10 +100,12 @@ const runDay = async (day) => {
 
     const sample1Result = await dayFunctions.star1(sample1Input);
 
-    if (sample1Result != results.sample1) {
+    if (!results.sample1 || sample1Result != results.sample1) {
       console.log(`ERROR star1 test expected ${results.sample1} but got ${sample1Result}`)
       return;
     }
+
+    console.log(`star 1 test good with ${sample1Result}`)
 
     const star1Answer = await dayFunctions.star1(input);
 
